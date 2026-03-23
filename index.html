@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador de Archivos</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        ul { list-style: none; padding: 0; margin-top: 20px; }
+        li { padding: 8px; border-bottom: 1px solid #eee; font-size: 14px; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Buscador de Texto</h2>
+        <input type="text" id="carpeta" placeholder="Ruta de la carpeta (ej: C:\MisDocumentos)">
+        <input type="text" id="texto" placeholder="Texto a buscar...">
+        <button onclick="buscar()">Buscar ahora</button>
+
+        <ul id="resultados"></ul>
+    </div>
+
+    <script>
+        async function buscar() {
+            const carpeta = document.getElementById('carpeta').value;
+            const texto = document.getElementById('texto').value;
+            const lista = document.getElementById('resultados');
+            
+            lista.innerHTML = "<li>Buscando...</li>";
+
+            const response = await fetch('/buscar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ carpeta, texto })
+            });
+
+            const data = await response.json();
+            lista.innerHTML = data.resultados.length > 0 
+                ? data.resultados.map(r => `<li>📄 ${r}</li>`).join('')
+                : "<li>No se encontraron coincidencias.</li>";
+        }
+    </script>
+</body>
+</html>
