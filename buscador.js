@@ -4,6 +4,8 @@ const path = require('path');
 const app = express();
 const port = 5000;
 
+app.use(express.static('public'));
+
 app.use(express.json());
 
 // --- INTERFAZ HTML (Frontend) ---
@@ -14,7 +16,9 @@ app.get('/', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="icon" href="/ico.ico" type="image/x-icon">
             <title>Buscador de Texto Local</title>
+
             <style>
                 body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
                 .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
