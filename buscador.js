@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
                 <h2>🔍 Buscador de Contenido</h2>
                 <div class="form-group">
                     <label>Ruta de la carpeta:</label>
-                    <input type="text" id="ruta" placeholder="C:\\db\\Github\\resucitov2">
+                    <input type="text" id="ruta" placeholder="C:\\db\\Github\\resucito">
                 </div>
                 <div class="form-group">
                     <label>Texto a buscar:</label>
