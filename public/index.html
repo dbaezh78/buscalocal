@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/ico.ico" type="image/x-icon">
+    <title>BuscaLocal - Buscador Inteligente de Archivos</title>
+
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --primary-light: #ecfdf5;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-light: #eff6ff;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --highlight: #fef08a;
+            --highlight-border: #facc15;
+            --radius: 10px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 24px 16px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 20px 28px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-header {
+            background: rgba(255, 255, 255, 0.12);
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+
+        .btn-header:hover {
+            background: rgba(255, 255, 255, 0.22);
+            color: white;
+        }
+
+        /* Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .input-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 12px 38px 12px 14px;
+            font-size: 15px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            background: #fdfdfd;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-wrap input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            background: #fff;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        .clear-btn:hover { color: #475569; }
+
+        /* Buttons */
+        .btn {
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-outline {
+            background-color: white;
+            border: 1.5px solid var(--border);
+            color: #334155;
+        }
+
+        .btn-outline:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .btn-lg {
+            padding: 14px 24px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        /* Chips / Recientes */
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .chip-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-right: 4px;
+        }
+
+        .chip {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+            max-width: 280px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .chip:hover {
+            background: #e2e8f0;
+            color: var(--accent);
+            border-color: #cbd5e1;
+        }
+
+        .chip-del {
+            color: #94a3b8;
+            font-weight: bold;
+            font-size: 11px;
+            padding: 0 2px;
+            border-radius: 50%;
+        }
+
+        .chip-del:hover {
+            color: var(--danger);
+        }
+
+        /* Options Grid */
+        .options-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .options-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .tag-info {
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 11px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Extension Pills */
+        .ext-filter-row {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .ext-filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .ext-btn {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .ext-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Search Actions */
+        .actions-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Progress / Status */
+        .status-box {
+            display: none;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            background: #eff6ff;
+            border: 1.5px solid #bfdbfe;
+            color: #1e40af;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid #bfdbfe;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Results Stats */
+        .results-summary {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: #475569;
+            flex-wrap: wrap;
+        }
+
+        .summary-stats strong {
+            color: var(--text-main);
+        }
+
+        .summary-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-results-input {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            width: 200px;
+        }
+
+        /* File Result Cards */
+        .file-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .file-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
+        }
+
+        .file-header {
+            background: #f8fafc;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .file-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .file-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: white;
+            background: #64748b;
+        }
+
+        .badge-docx { background: #2563eb; }
+        .badge-pdf  { background: #dc2626; }
+        .badge-xlsx { background: #16a34a; }
+        .badge-js, .badge-ts { background: #ca8a04; }
+        .badge-txt  { background: #475569; }
+
+        .file-info {
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .file-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-path {
+            font-size: 12px;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-file-action {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #334155;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: 0.15s;
+        }
+
+        .btn-file-action:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+            color: var(--accent);
+        }
+
+        .match-count-badge {
+            background: #e2e8f0;
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+
+        /* Matches Body */
+        .file-body {
+            padding: 10px 16px;
+            background: #fff;
+        }
+
+        .match-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13.5px;
+            line-height: 1.6;
+            margin-bottom: 4px;
+            background: #fbfcfd;
+            border-left: 3px solid #cbd5e1;
+        }
+
+        .match-row:hover {
+            background: #f1f5f9;
+            border-left-color: var(--accent);
+        }
+
+        .line-num {
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 12px;
+            min-width: 55px;
+            text-align: right;
+            user-select: none;
+            padding-right: 6px;
+        }
+
+        .match-snippet {
+            flex: 1;
+            color: #1e293b;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        mark.resaltado {
+            background-color: var(--highlight);
+            border-bottom: 2px solid var(--highlight-border);
+            color: #854d0e;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .more-matches-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .more-matches-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px dashed #cbd5e1;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 700px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: modalIn 0.2s ease-out;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #94a3b8;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover { color: #0f172a; background: #e2e8f0; }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #f8fafc;
+        }
+
+        /* Tree Browser Specifics */
+        .breadcrumbs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            margin-bottom: 14px;
+            font-size: 13px;
+        }
+
+        .crumb-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-weight: 600;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .crumb-btn:hover { background: #e2e8f0; }
+
+        .folder-list {
+            list-style: none;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+
+        .folder-item {
+            padding: 10px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .folder-item:hover { background: #f8fafc; color: var(--accent); }
+
+        .folder-name-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        /* History Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .history-table th, .history-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            text-align: left;
+        }
+
+        .history-table th {
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .history-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            font-size: 14px;
+            z-index: 9999;
+            display: none;
+            animation: toastIn 0.2s ease-out;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <img src="/ico.ico" alt="Icono" onerror="this.style.display='none'">
+                <div>
+                    <h1>Buscador de Contenido Local</h1>
+                    <p>Búsqueda exhaustiva en archivos de texto, código, Word (.docx), Excel y PDF</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-header" onclick="openHistoryModal()">
+                    🕒 Historial de Búsquedas
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Search Card -->
+        <div class="card">
+            <!-- Carpeta de Búsqueda -->
+            <div class="form-group">
+                <label>
+                    <span>📁 Carpeta de Búsqueda</span>
+                    <span id="folder-status" style="font-weight: normal; font-size: 12px; color: var(--text-muted);"></span>
+                </label>
+                <div class="input-row">
+                    <div class="input-wrap">
+                        <input type="text" id="ruta" placeholder="Ejemplo: C:\db\Github\resucitov2 o C:\MisDocumentos" autocomplete="off">
+                        <button class="clear-btn" onclick="clearInput('ruta')">✕</button>
+                    </div>
+                    <button class="btn btn-accent" onclick="browseFolderWindows()" title="Abre el selector de carpetas de Windows">
+                        📁 Examinar en Windows
+                    </button>
+                    <button class="btn btn-outline" onclick="openTreeModal()" title="Navegar carpetas en el navegador">
+                        🗂️ Explorar
+                    </button>
+                </div>
+                <!-- Carpetas recientes chips -->
+                <div class="chips-container" id="recent-folders-container">
+                    <span class="chip-label">Recientes:</span>
+                    <span style="font-size: 12px; color: #94a3b8;">Sin carpetas recientes</span>
+                </div>
+            </div>
+
+            <!-- Texto a Buscar -->
+            <div class="form-group">
+                <label>
+                    <span>🔍 Texto, frase o código a buscar</span>
+                    <span class="tag-info">Insensible a acentos activo</span>
+                </label>
+                <div class="input-row">
+                    <div class="input-wrap">
+                        <input type="text" id="texto" placeholder="Escribe aquí... (ej: cancion, método, función, variable)" autocomplete="off">
+                        <button class="clear-btn" onclick="clearInput('texto')">✕</button>
+                    </div>
+                </div>
+                <!-- Búsquedas recientes chips -->
+                <div class="chips-container" id="recent-searches-container">
+                    <span class="chip-label">Términos recientes:</span>
+                    <span style="font-size: 12px; color: #94a3b8;">Sin búsquedas recientes</span>
+                </div>
+            </div>
+
+            <!-- Opciones Avanzadas -->
+            <div class="options-box">
+                <div class="options-title">⚙️ Opciones de búsqueda y exhaustividad</div>
+                <div class="options-grid">
+                    <label class="checkbox-label" title="Encuentra palabras con o sin acento (ej: canción encuentra cancion y viceversa)">
+                        <input type="checkbox" id="opt-acentos" checked>
+                        <span>Ignorar acentos / tildes <strong style="color: var(--primary);">(Inteligente)</strong></span>
+                    </label>
+
+                    <label class="checkbox-label" title="Revisa todas las carpetas dentro de la carpeta seleccionada">
+                        <input type="checkbox" id="opt-subcarpetas" checked>
+                        <span>Incluir subcarpetas (recursivo)</span>
+                    </label>
+
+                    <label class="checkbox-label" title="Omite node_modules, .git y carpetas de sistema para búsqueda súper rápida">
+                        <input type="checkbox" id="opt-ignorar-sistema" checked>
+                        <span>Omitir node_modules / .git (Rápido)</span>
+                    </label>
+
+                    <label class="checkbox-label" title="Coincidir mayúsculas y minúsculas exactamente">
+                        <input type="checkbox" id="opt-mayus">
+                        <span>Distinguir mayúsculas / minúsculas</span>
+                    </label>
+
+                    <label class="checkbox-label" title="Busca la palabra completa aislada">
+                        <input type="checkbox" id="opt-palabra-completa">
+                        <span>Palabra completa solamente</span>
+                    </label>
+                </div>
+
+                <!-- Filtro de extensiones -->
+                <div class="ext-filter-row">
+                    <span class="ext-filter-label">Tipos de archivo:</span>
+                    <button class="ext-btn active" data-filter="*" onclick="setExtFilter('*', this)">Todos (*)</button>
+                    <button class="ext-btn" data-filter=".docx, .xlsx, .pdf, .txt, .csv" onclick="setExtFilter('.docx, .xlsx, .pdf, .txt, .csv', this)">📄 Documentos (Word, Excel, PDF, TXT)</button>
+                    <button class="ext-btn" data-filter=".js, .ts, .html, .css, .php, .py, .sql, .json" onclick="setExtFilter('.js, .ts, .html, .css, .php, .py, .sql, .json', this)">💻 Código y Web</button>
+                    <input type="text" id="custom-ext" placeholder="Personalizado: .txt, .log" style="padding: 4px 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px; width: 170px;" oninput="onCustomExtChange(this)">
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="actions-row">
+                <button class="btn btn-primary btn-lg" id="btn-buscar" onclick="iniciarBusqueda()">
+                    🔍 Iniciar Búsqueda Exhaustiva
+                </button>
+                <button class="btn btn-danger" id="btn-cancelar" style="display: none; padding: 14px 20px;" onclick="cancelarBusqueda()">
+                    ⏹️ Cancelar
+                </button>
+            </div>
+        </div>
+
+        <!-- Indicador de Progreso -->
+        <div class="status-box" id="status-box">
+            <div class="spinner"></div>
+            <div>
+                <strong id="status-text">Buscando coincidencias de forma exhaustiva...</strong>
+                <div style="font-size: 13px; color: #3b82f6;" id="status-sub">Analizando carpetas y leyendo archivos...</div>
+            </div>
+        </div>
+
+        <!-- Barra de Resumen de Resultados -->
+        <div class="results-summary" id="results-summary" style="display: none;">
+            <div class="summary-stats">
+                <div>Archivos analizados: <strong id="stat-archivos">0</strong></div>
+                <div>Con coincidencias: <strong id="stat-coincidencias-archivos">0</strong></div>
+                <div>Total coincidencias: <strong id="stat-total">0</strong></div>
+                <div>Tiempo: <strong id="stat-tiempo">0s</strong></div>
+            </div>
+            <div class="summary-actions">
+                <input type="text" class="filter-results-input" id="filter-view" placeholder="Filtrar en resultados..." oninput="filtrarResultadosLocales(this.value)">
+                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="toggleExpandAll()">
+                    ↕ Expandir/Colapsar
+                </button>
+            </div>
+        </div>
+
+        <!-- Lista de Resultados -->
+        <div id="resultados">
+            <div class="empty-state">
+                <div class="empty-icon">📂</div>
+                <h3>Listo para buscar</h3>
+                <p>Selecciona una carpeta, escribe el texto y presiona <strong>"Iniciar Búsqueda Exhaustiva"</strong>.</p>
+                <p style="font-size: 12px; margin-top: 6px; color: #94a3b8;">Soporta archivos de texto, código, Word (.docx), Excel (.xlsx) y PDF (.pdf) sin importar los acentos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1: Explorador de Carpetas -->
+    <div class="modal-overlay" id="tree-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">🗂️ Explorador de Carpetas</div>
+                <button class="modal-close" onclick="closeTreeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="breadcrumbs" id="tree-breadcrumbs">
+                    <span>Unidades:</span>
+                </div>
+                <ul class="folder-list" id="tree-folder-list">
+                    <li style="padding: 15px; text-align: center; color: #64748b;">Cargando carpetas...</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeTreeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="seleccionarCarpetaArbol()">✓ Usar esta carpeta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Historial Completo -->
+    <div class="modal-overlay" id="history-modal">
+        <div class="modal-card" style="max-width: 800px;">
+            <div class="modal-header">
+                <div class="modal-title">🕒 Historial de Búsquedas y Carpetas</div>
+                <button class="modal-close" onclick="closeHistoryModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <strong style="font-size: 14px; color: #334155;">Búsquedas realizadas:</strong>
+                    <button class="btn btn-outline" style="padding: 4px 8px; font-size: 12px; color: var(--danger);" onclick="limpiarHistorialCompleto()">
+                        🗑️ Borrar Historial
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Texto Buscado</th>
+                                <th>Carpeta</th>
+                                <th>Resultados</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeHistoryModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let currentSearchId = null;
+        let currentTreePath = '';
+        let allResultsData = [];
+        let allExpanded = true;
+        let activeExtFilter = '*';
+
+        // Inicialización
+        window.addEventListener('DOMContentLoaded', () => {
+            loadHistory();
+            
+            // Atajos de teclado
+            document.getElementById('texto').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') iniciarBusqueda();
+            });
+            document.getElementById('ruta').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') iniciarBusqueda();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeTreeModal();
+                    closeHistoryModal();
+                }
+            });
+        });
+
+        function clearInput(id) {
+            document.getElementById(id).value = '';
+            document.getElementById(id).focus();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2600);
+        }
+
+        // --- FILTROS DE EXTENSIÓN ---
+        function setExtFilter(filter, btn) {
+            activeExtFilter = filter;
+            document.querySelectorAll('.ext-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            document.getElementById('custom-ext').value = '';
+        }
+
+        function onCustomExtChange(input) {
+            if (input.value.trim()) {
+                activeExtFilter = input.value.trim();
+                document.querySelectorAll('.ext-btn').forEach(b => b.classList.remove('active'));
+            } else {
+                setExtFilter('*', document.querySelector('.ext-btn[data-filter="*"]'));
+            }
+        }
+
+        // --- HISTORIAL ---
+        async function loadHistory() {
+            try {
+                const res = await fetch('/api/history');
+                const data = await res.json();
+                renderRecentFolders(data.recentFolders || []);
+                renderRecentSearches(data.recentSearches || []);
+            } catch (e) {
+                console.error('Error al cargar historial:', e);
+            }
+        }
+
+        function renderRecentFolders(folders) {
+            const container = document.getElementById('recent-folders-container');
+            if (!folders || folders.length === 0) {
+                container.innerHTML = '<span class="chip-label">Recientes:</span><span style="font-size: 12px; color: #94a3b8;">Sin carpetas recientes</span>';
+                return;
+            }
+
+            container.innerHTML = '<span class="chip-label">Recientes:</span>' + folders.slice(0, 5).map(f => `
+                <div class="chip" onclick="seleccionarCarpetaReciente('${escapeJs(f)}')" title="${escapeHtml(f)}">
+                    📁 ${escapeHtml(f.length > 32 ? '...' + f.slice(-30) : f)}
+                    <span class="chip-del" onclick="event.stopPropagation(); eliminarCarpetaHistorial('${escapeJs(f)}')">✕</span>
+                </div>
+            `).join('');
+        }
+
+        function renderRecentSearches(searches) {
+            const container = document.getElementById('recent-searches-container');
+            if (!searches || searches.length === 0) {
+                container.innerHTML = '<span class="chip-label">Términos recientes:</span><span style="font-size: 12px; color: #94a3b8;">Sin búsquedas recientes</span>';
+                return;
+            }
+
+            container.innerHTML = '<span class="chip-label">Términos recientes:</span>' + searches.slice(0, 6).map(s => `
+                <div class="chip" onclick="seleccionarBusquedaReciente('${escapeJs(s.query)}', '${escapeJs(s.folder)}')" title="Buscar '${escapeHtml(s.query)}' en ${escapeHtml(s.folder)}">
+                    🔍 ${escapeHtml(s.query)}
+                    <span class="chip-del" onclick="event.stopPropagation(); eliminarBusquedaHistorial('${s.id}')">✕</span>
+                </div>
+            `).join('');
+        }
+
+        function seleccionarCarpetaReciente(folder) {
+            document.getElementById('ruta').value = folder;
+            document.getElementById('texto').focus();
+        }
+
+        function seleccionarBusquedaReciente(query, folder) {
+            document.getElementById('texto').value = query;
+            if (folder && !document.getElementById('ruta').value) {
+                document.getElementById('ruta').value = folder;
+            }
+            iniciarBusqueda();
+        }
+
+        async function eliminarCarpetaHistorial(folder) {
+            await fetch('/api/history/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'folder', value: folder })
+            });
+            loadHistory();
+        }
+
+        async function eliminarBusquedaHistorial(id) {
+            await fetch('/api/history/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'search', value: id })
+            });
+            loadHistory();
+        }
+
+        async function limpiarHistorialCompleto() {
+            if (!confirm('¿Seguro que deseas borrar todo el historial de búsquedas y carpetas?')) return;
+            await fetch('/api/history/clear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'all' })
+            });
+            loadHistory();
+            openHistoryModal();
+            showToast('Historial borrado con éxito');
+        }
+
+        async function openHistoryModal() {
+            document.getElementById('history-modal').style.display = 'flex';
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8;">Cargando historial...</td></tr>';
+
+            try {
+                const res = await fetch('/api/history');
+                const data = await res.json();
+                const searches = data.recentSearches || [];
+
+                if (searches.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 20px;">No hay búsquedas registradas en el historial.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = searches.map(s => `
+                    <tr>
+                        <td style="color: #64748b; font-size: 12px;">${s.date}</td>
+                        <td><strong>${escapeHtml(s.query)}</strong></td>
+                        <td style="font-size: 12px; color: #475569;" title="${escapeHtml(s.folder)}">${escapeHtml(s.folder.length > 35 ? '...' + s.folder.slice(-33) : s.folder)}</td>
+                        <td><span class="match-count-badge">${s.matchesCount || 0}</span></td>
+                        <td>
+                            <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px;" onclick="cargarBusquedaDesdeHistorial('${escapeJs(s.query)}', '${escapeJs(s.folder)}')">
+                                Repetir
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger);">Error al cargar historial</td></tr>';
+            }
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('history-modal').style.display = 'none';
+        }
+
+        function cargarBusquedaDesdeHistorial(query, folder) {
+            document.getElementById('texto').value = query;
+            document.getElementById('ruta').value = folder;
+            closeHistoryModal();
+            iniciarBusqueda();
+        }
+
+        // --- SELECCIONADOR DE CARPETAS NATIVO WINDOWS ---
+        async function browseFolderWindows() {
+            showToast('Abriendo ventana de selección de carpeta de Windows...');
+            try {
+                const res = await fetch('/api/browse-folder-windows', { method: 'POST' });
+                const data = await res.json();
+                if (data.success && data.folder) {
+                    document.getElementById('ruta').value = data.folder;
+                    loadHistory();
+                    document.getElementById('texto').focus();
+                    showToast('Carpeta seleccionada: ' + data.folder);
+                }
+            } catch (err) {
+                alert('No se pudo abrir el selector de Windows: ' + err.message);
+            }
+        }
+
+        // --- ARBOL EXPLORADOR EN PANTALLA ---
+        function openTreeModal() {
+            document.getElementById('tree-modal').style.display = 'flex';
+            const initialDir = document.getElementById('ruta').value.trim();
+            loadTreePath(initialDir);
+        }
+
+        function closeTreeModal() {
+            document.getElementById('tree-modal').style.display = 'none';
+        }
+
+        async function loadTreePath(dir) {
+            currentTreePath = dir || '';
+            const listEl = document.getElementById('tree-folder-list');
+            const breadcrumbsEl = document.getElementById('tree-breadcrumbs');
+
+            listEl.innerHTML = '<li style="padding: 15px; text-align: center; color: #64748b;">Cargando...</li>';
+
+            try {
+                const res = await fetch(`/api/browse-tree?dir=${encodeURIComponent(currentTreePath)}`);
+                const data = await res.json();
+
+                if (!currentTreePath) {
+                    // Vista de unidades
+                    breadcrumbsEl.innerHTML = '<span>Unidades del sistema:</span>';
+                    listEl.innerHTML = (data.drives || []).map(d => `
+                        <li class="folder-item" onclick="loadTreePath('${escapeJs(d.path)}')">
+                            <div class="folder-name-wrap">
+                                <span>💾</span>
+                                <strong>Disco Local (${escapeHtml(d.name)})</strong>
+                            </div>
+                            <span>➡️</span>
+                        </li>
+                    `).join('');
+                    return;
+                }
+
+                // Armar migas de pan
+                const parts = currentTreePath.split(/[\\/]/).filter(Boolean);
+                let crumbHtml = `<button class="crumb-btn" onclick="loadTreePath('')">💾 Unidades</button> / `;
+                let accumPath = '';
+
+                parts.forEach((p, idx) => {
+                    accumPath += (idx === 0 ? p + '\\' : p + '\\');
+                    const thisPath = accumPath;
+                    crumbHtml += `<button class="crumb-btn" onclick="loadTreePath('${escapeJs(thisPath)}')">${escapeHtml(p)}</button> / `;
+                });
+                breadcrumbsEl.innerHTML = crumbHtml;
+
+                // Contenido de la carpeta
+                let itemsHtml = '';
+                if (data.parent) {
+                    itemsHtml += `
+                        <li class="folder-item" onclick="loadTreePath('${escapeJs(data.parent)}')" style="background: #f1f5f9;">
+                            <div class="folder-name-wrap">
+                                <span>⬆️</span>
+                                <strong>Subir de nivel (..)</strong>
+                            </div>
+                        </li>
+                    `;
+                }
+
+                if (!data.subdirs || data.subdirs.length === 0) {
+                    itemsHtml += '<li style="padding: 15px; text-align: center; color: #94a3b8;">No hay más subcarpetas aquí.</li>';
+                } else {
+                    itemsHtml += data.subdirs.map(s => `
+                        <li class="folder-item" onclick="loadTreePath('${escapeJs(s.path)}')">
+                            <div class="folder-name-wrap">
+                                <span>📁</span>
+                                <span>${escapeHtml(s.name)}</span>
+                            </div>
+                            <span>➡️</span>
+                        </li>
+                    `).join('');
+                }
+
+                listEl.innerHTML = itemsHtml;
+            } catch (e) {
+                listEl.innerHTML = `<li style="padding: 15px; text-align: center; color: var(--danger);">Error: ${e.message}</li>`;
+            }
+        }
+
+        function seleccionarCarpetaArbol() {
+            if (!currentTreePath) {
+                alert('Selecciona una unidad o carpeta primero.');
+                return;
+            }
+            document.getElementById('ruta').value = currentTreePath;
+            closeTreeModal();
+            loadHistory();
+            document.getElementById('texto').focus();
+            showToast('Carpeta seleccionada: ' + currentTreePath);
+        }
+
+        // --- BÚSQUEDA EXHAUSTIVA ---
+        async function iniciarBusqueda() {
+            const ruta = document.getElementById('ruta').value.trim();
+            const texto = document.getElementById('texto').value.trim();
+
+            if (!ruta) {
+                alert('Por favor especifica o examina una carpeta para buscar.');
+                document.getElementById('ruta').focus();
+                return;
+            }
+            if (!texto) {
+                alert('Por favor ingresa el texto o código que deseas encontrar.');
+                document.getElementById('texto').focus();
+                return;
+            }
+
+            const subcarpetas = document.getElementById('opt-subcarpetas').checked;
+            const ignorarSistema = document.getElementById('opt-ignorar-sistema').checked;
+            const ignorarAcentos = document.getElementById('opt-acentos').checked;
+            const distinguirMayus = document.getElementById('opt-mayus').checked;
+            const palabraCompleta = document.getElementById('opt-palabra-completa').checked;
+
+            currentSearchId = Date.now().toString();
+
+            // UI Estados
+            document.getElementById('btn-buscar').style.display = 'none';
+            document.getElementById('btn-cancelar').style.display = 'inline-flex';
+            document.getElementById('status-box').style.display = 'flex';
+            document.getElementById('status-text').textContent = `Buscando "${texto}" de forma exhaustiva...`;
+            document.getElementById('status-sub').textContent = `Escaneando en ${ruta}...`;
+            document.getElementById('results-summary').style.display = 'none';
+            document.getElementById('resultados').innerHTML = '';
+
+            const startTime = Date.now();
+
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ruta,
+                        texto,
+                        subcarpetas,
+                        ignorarSistema,
+                        ignorarAcentos,
+                        distinguirMayus,
+                        palabraCompleta,
+                        extensiones: activeExtFilter,
+                        searchId: currentSearchId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en la búsqueda');
+                }
+
+                allResultsData = data.resultados || [];
+                renderResults(allResultsData, data.estadisticas);
+                loadHistory(); // Actualizar chips recientes
+            } catch (err) {
+                document.getElementById('resultados').innerHTML = `
+                    <div class="card" style="border-left: 5px solid var(--danger);">
+                        <h3 style="color: var(--danger); margin-bottom: 8px;">❌ No se pudo completar la búsqueda</h3>
+                        <p>${escapeHtml(err.message)}</p>
+                    </div>
+                `;
+            } finally {
+                document.getElementById('btn-buscar').style.display = 'inline-flex';
+                document.getElementById('btn-cancelar').style.display = 'none';
+                document.getElementById('status-box').style.display = 'none';
+                currentSearchId = null;
+            }
+        }
+
+        async function cancelarBusqueda() {
+            if (!currentSearchId) return;
+            document.getElementById('status-text').textContent = 'Cancelando búsqueda...';
+            await fetch('/api/cancel-search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ searchId: currentSearchId })
+            });
+        }
+
+        // --- RENDERIZADO DE RESULTADOS ---
+        function renderResults(filesResults, stats) {
+            const container = document.getElementById('resultados');
+            const summaryBox = document.getElementById('results-summary');
+
+            summaryBox.style.display = 'flex';
+            document.getElementById('stat-archivos').textContent = stats ? stats.totalArchivosAnalizados : '-';
+            document.getElementById('stat-coincidencias-archivos').textContent = filesResults.length;
+            document.getElementById('stat-total').textContent = stats ? stats.totalCoincidencias : '-';
+            document.getElementById('stat-tiempo').textContent = (stats ? stats.tiempoSegundos : '0') + 's';
+
+            if (filesResults.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>No se encontraron coincidencias</h3>
+                        <p>No se encontró el texto buscado en la carpeta especificada con los filtros actuales.</p>
+                        <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">
+                            ${stats && stats.cancelado ? '⚠️ La búsqueda fue cancelada antes de finalizar.' : 'Prueba desmarcar "Omitir node_modules" o verificar los filtros.'}
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filesResults.map((f, fileIdx) => {
+                const badgeClass = 'badge-' + (f.tipo.toLowerCase());
+                const visibleMatches = f.coincidencias.slice(0, 5);
+                const hiddenMatches = f.coincidencias.slice(5);
+
+                return `
+                    <div class="file-card" data-filename="${escapeHtml(f.nombre.toLowerCase())}" data-filepath="${escapeHtml(f.archivo.toLowerCase())}">
+                        <div class="file-header">
+                            <div class="file-title-wrap">
+                                <span class="file-badge ${badgeClass}">${escapeHtml(f.tipo)}</span>
+                                <div class="file-info">
+                                    <div class="file-name" title="${escapeHtml(f.archivo)}">${escapeHtml(f.nombre)}</div>
+                                    <div class="file-path">${escapeHtml(f.dir)}</div>
+                                </div>
+                            </div>
+                            <div class="file-actions">
+                                <span class="match-count-badge">${f.coincidencias.length} coincidencia${f.coincidencias.length === 1 ? '' : 's'}</span>
+                                <button class="btn-file-action" onclick="abrirCarpeta('${escapeJs(f.archivo)}')" title="Abrir ubicación en Windows Explorer">
+                                    📂 Carpeta
+                                </button>
+                                <button class="btn-file-action" onclick="abrirArchivo('${escapeJs(f.archivo)}')" title="Abrir archivo con aplicación predeterminada">
+                                    📄 Abrir
+                                </button>
+                                <button class="btn-file-action" onclick="copiarRuta('${escapeJs(f.archivo)}')" title="Copiar ruta completa al portapapeles">
+                                    📋 Copiar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="file-body" id="file-body-${fileIdx}">
+                            ${visibleMatches.map(m => `
+                                <div class="match-row">
+                                    <span class="line-num">Línea ${m.n_linea}:</span>
+                                    <code class="match-snippet">${m.contenido}</code>
+                                </div>
+                            `).join('')}
+                            
+                            ${hiddenMatches.length > 0 ? `
+                                <div id="hidden-${fileIdx}" style="display: none;">
+                                    ${hiddenMatches.map(m => `
+                                        <div class="match-row">
+                                            <span class="line-num">Línea ${m.n_linea}:</span>
+                                            <code class="match-snippet">${m.contenido}</code>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <button class="more-matches-btn" id="btn-toggle-${fileIdx}" onclick="toggleMasCoincidencias(${fileIdx}, ${hiddenMatches.length})">
+                                    ➕ Ver ${hiddenMatches.length} coincidencias más...
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleMasCoincidencias(idx, count) {
+            const hiddenDiv = document.getElementById(`hidden-${idx}`);
+            const btn = document.getElementById(`btn-toggle-${idx}`);
+            if (hiddenDiv.style.display === 'none') {
+                hiddenDiv.style.display = 'block';
+                btn.textContent = '➖ Ocultar coincidencias adicionales';
+            } else {
+                hiddenDiv.style.display = 'none';
+                btn.textContent = `➕ Ver ${count} coincidencias más...`;
+            }
+        }
+
+        function toggleExpandAll() {
+            allExpanded = !allExpanded;
+            document.querySelectorAll('.file-body').forEach(b => {
+                b.style.display = allExpanded ? 'block' : 'none';
+            });
+        }
+
+        function filtrarResultadosLocales(term) {
+            const clean = term.toLowerCase().trim();
+            document.querySelectorAll('.file-card').forEach(card => {
+                const name = card.getAttribute('data-filename') || '';
+                const path = card.getAttribute('data-filepath') || '';
+                const body = card.innerText.toLowerCase();
+                if (!clean || name.includes(clean) || path.includes(clean) || body.includes(clean)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // --- ACCIONES EN ARCHIVOS ---
+        async function abrirArchivo(filePath) {
+            try {
+                const res = await fetch('/api/open-file', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filePath })
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    showToast('No se pudo abrir el archivo: ' + (data.error || ''));
+                } else {
+                    showToast('Archivo abierto en Windows');
+                }
+            } catch (e) {
+                showToast('Error al abrir archivo');
+            }
+        }
+
+        async function abrirCarpeta(filePath) {
+            try {
+                await fetch('/api/open-folder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filePath })
+                });
+                showToast('Ubicación abierta en Explorador de Windows');
+            } catch (e) {
+                showToast('Error al abrir carpeta');
+            }
+        }
+
+        function copiarRuta(filePath) {
+            navigator.clipboard.writeText(filePath).then(() => {
+                showToast('✓ Ruta copiada al portapapeles');
+            }).catch(() => {
+                prompt('Copia la ruta:', filePath);
+            });
+        }
+
+        // --- HELPERS ---
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escapeJs(str) {
+            if (!str) return '';
+            return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        }
+    </script>
+</body>
+</html>
